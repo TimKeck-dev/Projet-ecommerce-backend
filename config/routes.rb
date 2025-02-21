@@ -5,6 +5,12 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      resources :products, only: [:index, :show]
+    end
+  end
+
   resources :products, only: [:index, :show]
 
   resources :orders, only: [:index, :show, :create, :update] do
@@ -17,17 +23,4 @@ Rails.application.routes.draw do
   end
 
   resources :wishlists, only: [:index, :create, :destroy]
-
-  namespace :api, defaults: { format: :json } do
-    namespace :v1 do
-      resources :products, only: [:index, :show]
-      resources :orders, only: [:index, :show, :create, :update] do
-        resources :order_items, only: [:create, :update, :destroy]
-      end
-      resources :carts, only: [:show] do
-        post "add_product/:product_id", to: "carts#add_product", as: :add_product
-        delete "remove_product/:product_id", to: "carts#remove_product", as: :remove_product
-      end
-    end
-  end
 end
